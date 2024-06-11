@@ -8,7 +8,7 @@ services:
         MYSQL_ROOT_PASSWORD: secret
         MYSQL_DATABASE: crud
 
-  app:
+  server:
       depends_on:
         - mysql-docker
       build: ./server
@@ -16,6 +16,14 @@ services:
       ports:
         - 4001:4001
       restart: unless-stopped
+
+  client:
+      build: ./client-app
+      depends_on:
+        - server
+      ports:
+        - 4000:5173 
+      restart: unless-stopped  
 
 volumes:
   api-server-db:     

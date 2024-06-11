@@ -12,4 +12,5 @@ RUN npm install
 
 # COMMANDS to run the app
 CMD ["node","server.js"]
+
 EXPOSE 4001

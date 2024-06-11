@@ -27,7 +27,7 @@ async function testConnection() {
 }
 testConnection();
 
-const Cat = sequelize.define("Cat", {
+const Student = sequelize.define("Student", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -38,7 +38,7 @@ function serverUp() {
   const app = express();
 
   require('dotenv').config();
-  app.use(cors("*"));
+  app.use(cors());
 
   // parse requests of content-type - application/json
   app.use(express.json());
@@ -47,49 +47,66 @@ function serverUp() {
   app.use(express.urlencoded({ extended: true }));
 
   app.get("/", (req, res) => {
-    res.json({ message: "Welcome devops course." });
+    res.json({ message: "Welcome devops course. Batch: 4" });
   });
 
   app.get("/api/greetings", (req, res) => {
     res.json({
       status: 200,
       data: {
-        message: "Your seeing this, because your great~"
+        message: "Your seeing this, because your great!"
       }
     });
   });
 
-  app.get("/api/cats", async (req, res) => {
+  app.get("/api/students", async (req, res) => {
 
-    const cats = await Cat.findAll({});
+    const students = await Student.findAll({});
 
     res.json({
       status: 200,
       data: {
-        cats
+        students
       }
     })
   });
 
-  app.post("/api/cats", async (req, res) => {
+  app.post("/api/students", async (req, res) => {
     const { name } = req.body;
 
-    const cat = await Cat.create({
+    const student = await Student.create({
       name
     });
 
-    await cat.save();
+    await student.save();
     res.json({
       status: 200,
       data: {
-        cat
+        student
+      }
+    })
+  });
+
+  app.delete("/api/students/:id", async (req, res) => {
+    const { id } = req.params;
+
+    const student = await Student.destroy({
+      where: {
+        id
+      }
+    });
+
+    res.json({
+      status: 200,
+      data: {
+        student
       }
     })
   });
 
   // set port, listen for requests
   const PORT = process.env.PORT || 3001;
-  console.log('port: ', process.env.PORT);
+
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
   });
