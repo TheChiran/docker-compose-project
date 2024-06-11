@@ -1,0 +1,21 @@
+services:
+  mysql-docker:
+      image: mysql:8.0
+      volumes:
+        - api-server-db:/var/lib/mysql
+      restart: always
+      environment:
+        MYSQL_ROOT_PASSWORD: secret
+        MYSQL_DATABASE: crud
+
+  app:
+      depends_on:
+        - mysql-docker
+      build: ./server
+      env_file: ./server/app/.env
+      ports:
+        - 4001:4001
+      restart: unless-stopped
+
+volumes:
+  api-server-db:     
