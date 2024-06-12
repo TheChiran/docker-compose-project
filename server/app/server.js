@@ -1,8 +1,20 @@
 const express = require("express");
 const cors = require("cors");
+require('dotenv').config();
+
 const { Sequelize, DataTypes } = require("sequelize");
-const sequelize = new Sequelize('crud', 'root', 'secret', {
-  host: 'mysql-docker',
+
+const {
+  DB_ROOT_PASSWORD,
+  DB_DATABASE,
+  DB_HOST,
+  DB_USER,
+  API_CONTAINER_PORT: API_PORT
+} = process.env;
+
+const sequelize = new Sequelize(DB_DATABASE, DB_USER
+  , DB_ROOT_PASSWORD, {
+  host: DB_HOST,
   dialect: 'mysql',
   pool: {
     max: 5,
@@ -13,10 +25,9 @@ const sequelize = new Sequelize('crud', 'root', 'secret', {
 });
 // Test the connection
 async function testConnection() {
-  // console.log('called test connection: ',sequelize);
   try {
     await sequelize.authenticate();
-    await sequelize.sync({ force: true });
+    await sequelize.sync(); // { force: true } -> use only when, we want new dataset or create new table each time
     console.log("Database connected succefully");
     serverUp();
   } catch (error) {
@@ -37,7 +48,6 @@ const Student = sequelize.define("Student", {
 function serverUp() {
   const app = express();
 
-  require('dotenv').config();
   app.use(cors());
 
   // parse requests of content-type - application/json
@@ -105,7 +115,7 @@ function serverUp() {
   });
 
   // set port, listen for requests
-  const PORT = process.env.PORT || 3001;
+  const PORT = API_PORT || 3001;
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);

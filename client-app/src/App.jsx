@@ -67,7 +67,7 @@ function App() {
     <>
       <h2>Welcome to devops course, batch: 4</h2>
       <h3>Add new student</h3>
-      <form action="#">
+      <section>
         <>
           <label htmlFor="">Name</label>
           <input
@@ -77,7 +77,7 @@ function App() {
           />
           <button onClick={submitStudent}>Add</button>
         </>
-      </form>
+      </section>
       <p>Our Students:</p>
       {students.length > 0
         ? students.map((student) => {
