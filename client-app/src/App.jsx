@@ -3,7 +3,7 @@ import "./App.css";
 import { useEffect } from "react";
 
 function App() {
-  const apiURL = "http://localhost:4001";
+  const apiURL = "http://127.0.0.1:4001";
   const [students, setStudents] = useState([]);
   const [student, setStudent] = useState(null);
 
