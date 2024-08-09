@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import axios from "axios";
 
 function App() {
-  const apiURL = "http://localhost:4001";
+  const apiURL = "http://crud-api"; // change or replace this with localhost:4001 in windows environment
   const [students, setStudents] = useState([]);
   const [student, setStudent] = useState(null);
 
