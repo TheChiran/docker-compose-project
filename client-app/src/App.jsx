@@ -1,61 +1,56 @@
 import { useState } from "react";
 import "./App.css";
 import { useEffect } from "react";
+import axios from "axios";
 
 function App() {
-  const apiURL = "http://127.0.0.1:4001";
+  const apiURL = "http://localhost:4001";
   const [students, setStudents] = useState([]);
   const [student, setStudent] = useState(null);
 
-  const submitStudent = () => {
+  const submitStudent = async () => {
     if (!student) {
       alert("Please enter student name");
       return;
     }
-    fetch(`${apiURL}/api/students`, {
-      // Adding method type
-      method: "POST",
 
-      // Adding body or contents to send
-      body: JSON.stringify({
+    axios
+      .post(`${apiURL}/api/students`, {
         name: student,
-      }),
-      headers: { 
-        "Content-type": "application/json; charset=UTF-8"
-    } 
-    })
-      // Converting to JSON
-      .then((response) => response.json())
-
-      // Displaying results to console
-      .then((json) => {
-        if (json.status === 200) {
-          fetchStudents();
-          setStudent(null);
-        }
-      });
-  };
-
-  const deleteStudent = (id) => {
-    fetch(`${apiURL}/api/students/${id}`, { method: "DELETE" })
-      .then((res) => {
-        return res.json();
       })
       .then((response) => {
         if (response.status === 200) {
           fetchStudents();
+          setStudent(null);
         }
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
 
-  const fetchStudents = () => {
-    fetch(`${apiURL}/api/students`)
-      .then((res) => {
-        return res.json();
-      })
+  const deleteStudent = (id) => {
+    axios
+      .delete(`${apiURL}/api/students/${id}`)
       .then((response) => {
-        const { students } = response.data;
+        if (response.status === 200) {
+          fetchStudents();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const fetchStudents = async () => {
+    axios
+      .get(`${apiURL}/api/students`)
+      .then((response) => {
+        const { students } = response.data.data;
         setStudents(students);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
 
@@ -79,7 +74,7 @@ function App() {
         </>
       </section>
       <p>Our Students:</p>
-      {students.length > 0
+      {students?.length > 0
         ? students.map((student) => {
             return (
               <p key={student.id}>
