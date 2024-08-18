@@ -1,0 +1,7 @@
+[docker_servers]
+ci_cd_server ansible_host=ci_cd_server_ip ansible_user=root_user
+app_server ansible_host=app_server_ip ansible_user=root_user
+
+[application_servers]
+app_server ansible_host=app_server_ip ansible_user=root_user
+

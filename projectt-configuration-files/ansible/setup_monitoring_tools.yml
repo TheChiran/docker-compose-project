@@ -1,0 +1,27 @@
+---
+- name: Manage folder and execute docker-compose
+  hosts: monitoring_servers
+  become: yes
+  tasks:
+    - name: Copy a folder to remote host
+      copy:
+          src: ./monitoring-tools
+          dest: /
+          owner: root_user
+          group: root        
+          mode: 0644
+        
+    - name: Set permissions for the folder
+      file:
+        path: /monitoring-tools
+        mode: '0775'
+
+    - name: Navigate to cadvisor folder and execute docker-compose
+      command: docker-compose up -d
+      args:
+        chdir: /monitoring-tools/cadviser
+        
+    - name: Navigate to nodexporter folder and execute docker-compose
+      command: docker-compose up -d
+      args:
+        chdir: /monitoring-tools/nodexporter

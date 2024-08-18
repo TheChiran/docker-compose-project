@@ -1,0 +1,53 @@
+  # external systems (federation, remote storage, Alertmanager).
+  # external_labels:
+  #  monitor: 'codelab-monitor'
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+    - job_name: 'prometheus'
+    # Override the global default and scrape targets from this job every 5 seconds.
+      scrape_interval: 5s
+      static_configs:
+        - targets: ['monitoring_server_ip:9090']
+
+  # Example job for node_exporter
+    - job_name: 'node_exporter'
+      static_configs:
+        - targets: ['monitoring_server_ip:9100']
+
+  # Example job for cadvisor
+    - job_name: 'cadvisor'
+      static_configs:
+        - targets: ['monitoring_server_ip:8080']
+
+  # Example job for node_exporter app_server
+    - job_name: 'node_exporter_app_server'
+      static_configs:
+        - targets: ['app_server:9100']
+
+  # Example job for cadvisor app_server
+    - job_name: 'cadvisor_app_server'
+      static_configs:
+        - targets: ['app_server:8080']      
+
+  # Example job for node_exporter ansible_server
+    - job_name: 'node_exporter_ansible_server'
+      static_configs:
+        - targets: ['ansible_server_ip:9100']
+
+  # Example job for cadvisor ansible_server
+    - job_name: 'cadvisor_ansible_server'
+      static_configs:
+        - targets: ['ansible_server_ip:8080']      
+
+  # Example job for node_exporter ci_cd_server
+    - job_name: 'node_exporter_ci_cd_server'
+      static_configs:
+        - targets: ['ci_cd_server_ip:9100']
+
+  # Example job for cadvisor ci_cd_server
+    - job_name: 'cadvisor_ci_cd_server'
+      static_configs:
+        - targets: ['ci_cd_server_ip:8081']          

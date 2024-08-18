@@ -1,0 +1,72 @@
+pipeline {
+    agent any
+
+    environment {
+        REMOTE_SERVER = 'deploy_operator_1@app_server_ip' // Replace with your remote server's SSH user and IP
+        REPO_URL = 'https://github.com/TheChiran/docker-compose-project.git' // Replace with your Git repository URL
+        PROJECT_DIR = '/docker-application' // Replace with the directory on the remote server where the project should be cloned
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                sshagent(['remote-server-ssh-web-app-server']) {
+                    script {
+                        def directoryExists = sh(script: """
+                            ssh ${REMOTE_SERVER} 'if [ -d "${PROJECT_DIR}/docker-compose-project" ]; then echo "true"; else echo "false"; fi'
+                            """, returnStdout: true).trim()
+
+                        if (directoryExists == 'true') {
+                            echo "Directory exists. Pulling latest changes..."
+                            sh """
+                            ssh ${REMOTE_SERVER} 'cd ${PROJECT_DIR}/docker-compose-project && git pull'
+                            """
+                        } else {
+                            echo "Directory does not exist. Cloning repository..."
+                            sh """
+                            ssh ${REMOTE_SERVER} 'cd ${PROJECT_DIR} && git clone ${REPO_URL}'
+                            """
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Check if environment variable is already there') {
+            steps {
+                sshagent(['remote-server-ssh-web-app-server']) {
+                    script {
+                        def fileExists = sh(script: """
+                            ssh ${REMOTE_SERVER} 'if [ -f "${PROJECT_DIR}/docker-compose-project/.env" ]; then echo "true"; else echo "false"; fi'
+                            """, returnStdout: true).trim()
+
+                        if (fileExists == 'true') {
+                            echo ".env file exists. do nothing"
+                        } else {
+                            sh """
+                            ssh ${REMOTE_SERVER} 'cd ${PROJECT_DIR}/docker-compose-project && cp .env.example .env'
+                            """
+                        }
+                    }
+
+                }
+            }
+        }
+
+        stage('Run Docker Compose') {
+            steps {
+                sshagent(['remote-server-ssh-web-app-server']) {
+                    sh """
+                    ssh ${REMOTE_SERVER} 'cd ${PROJECT_DIR}/docker-compose-project && docker compose down && docker compose build --no-cache && docker compose up -d'
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
