@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import axios from "axios";
 
 function App() {
-  const apiURL = "http://192.168.10.177:4001"; // change or replace this with localhost:4001 in windows environment
+  const apiURL = "http://localhost:4001"; // change or replace this with localhost:4001 in windows environment
   const [students, setStudents] = useState([]);
   const [student, setStudent] = useState(null);
 

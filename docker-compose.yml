@@ -1,31 +1,29 @@
 services:
   mysql-docker:
-      image: mysql:8.0
-      env_file: ./.env
-      volumes:
-        - api-server-db:/var/lib/mysql
-      restart: always
-      environment:
-        MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-        MYSQL_DATABASE: ${DB_DATABASE}  
+    image: mysql:8.0
+    env_file: ./.env
+    volumes:
+      - api-server-db:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
 
   crud-api:
-      depends_on:
-        - mysql-docker
-      build: ./server
-      env_file: ./.env
-      ports:
-        - ${API_EXPOSE_PORT}:${API_CONTAINER_PORT}
-      restart: unless-stopped
+    depends_on:
+      - mysql-docker
+    build: ./server
+    env_file: ./.env
+    restart: unless-stopped
 
   client:
-      build: ./client-app
-      env_file: ./.env
-      depends_on:
-        - crud-api
-      ports:
-        - ${CLIENT_EXPOSE_PORT}:${CLIENT_CONTAINER_PORT} 
-      restart: unless-stopped  
+    build: ./client-app
+    env_file: ./.env
+    depends_on:
+      - crud-api
+    ports:
+      - ${CLIENT_EXPOSE_PORT}:${CLIENT_CONTAINER_PORT}
+    restart: unless-stopped
 
 volumes:
-  api-server-db:     
+  api-server-db:
