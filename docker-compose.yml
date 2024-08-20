@@ -14,6 +14,8 @@ services:
       - mysql-docker
     build: ./server
     env_file: ./.env
+    ports:
+      - "${API_EXPOSE_PORT}:${API_CONTAINER_PORT}"
     restart: unless-stopped
 
   client:
